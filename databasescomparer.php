@@ -6,7 +6,7 @@ ini_set('display_startup_errors', false);
 
 /*
 
-Homepage.............: http://maran.pamil-visions.com / http://maran-emil.de
+Homepage.............: http://maran-emil.de
 Released.............: 25.02.2009
 Update...............: 12.09.2013
 Created by...........: Emil Maran (maran-emil.de)
