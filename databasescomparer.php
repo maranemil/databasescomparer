@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnusedLocalVariableInspection */
 
 ini_set('error_reporting', E_ALL);
 ini_set('display_errors', false);
@@ -21,20 +21,21 @@ Contact..............: maran_emil@yahoo.com
  *
  * @return array
  */
-function buildArrayDB1($sDB) {
-   global $link;
+function buildArrayDB1($sDB)
+{
+    global $link;
 
-   $db_selected = mysql_select_db($sDB, $link);
+    #$db_selected = mysql_select_db($sDB, $link);
 
-   $sql       = "SHOW TABLES FROM $sDB";
-   $result    = mysql_query($sql);
-   $arTotalDB = array();
-   while ($row = mysql_fetch_row($result)) {
-	  //echo "{$row[0]} <br>";
-	  $table                   = $row[0];
-	  $arTotalDB[$sDB][$table] = buildArrayFields($table);
-   }
-   return $arTotalDB;
+    $sql = "SHOW TABLES FROM $sDB";
+    $result = mysql_query($sql);
+    $arTotalDB = array();
+    while ($row = mysql_fetch_row($result)) {
+        //echo "{$row[0]} <br>";
+        $table = $row[0];
+        $arTotalDB[$sDB][$table] = buildArrayFields($table);
+    }
+    return $arTotalDB;
 }
 
 /**
@@ -42,17 +43,18 @@ function buildArrayDB1($sDB) {
  *
  * @return array
  */
-function buildArrayDB2($sDB) {
-   global $link;
-   $db_selected = mysql_select_db($sDB, $link);
-   $sql         = "SHOW TABLES FROM $sDB";
-   $result      = mysql_query($sql);
-   $arTotalDB   = array();
-   while ($row = mysql_fetch_row($result)) {
-	  $table                   = $row[0];
-	  $arTotalDB[$sDB][$table] = buildArrayFields($table);
-   }
-   return $arTotalDB;
+function buildArrayDB2($sDB)
+{
+    global $link;
+    $db_selected = mysql_select_db($sDB, $link);
+    $sql = "SHOW TABLES FROM $sDB";
+    $result = mysql_query($sql);
+    $arTotalDB = array();
+    while ($row = mysql_fetch_row($result)) {
+        $table = $row[0];
+        $arTotalDB[$sDB][$table] = buildArrayFields($table);
+    }
+    return $arTotalDB;
 }
 
 /**
@@ -60,118 +62,118 @@ function buildArrayDB2($sDB) {
  *
  * @return array
  */
-function buildArrayFields($table) {
-   $result        = mysql_query("SHOW COLUMNS FROM {$table}");
-   $arTableFields = array();
-   if (mysql_num_rows($result) > 0) {
-	  while ($row = mysql_fetch_assoc($result)) {
-		 $arTableFields[] = $row;
-	  }
-   }
-   return $arTableFields;
+function buildArrayFields($table)
+{
+    $result = mysql_query("SHOW COLUMNS FROM $table");
+    $arTableFields = array();
+    if (mysql_num_rows($result) > 0) {
+        while ($row = mysql_fetch_assoc($result)) {
+            $arTableFields[] = $row;
+        }
+    }
+    return $arTableFields;
 }
 
 /**
  * @param string $sDB1
  * @param string $sDB2
  */
-function compareDB($sDB1, $sDB2) {
-   global $arDB1, $arDB2;
+function compareDB($sDB1, $sDB2)
+{
+    global $arDB1, $arDB2;
 
-   $arDB1 = buildArrayDB1($sDB1);
-   $arDB2 = buildArrayDB2($sDB2);
+    $arDB1 = buildArrayDB1($sDB1);
+    $arDB2 = buildArrayDB2($sDB2);
 
-   echo "<B>Compare:<BR> ($sDB1) with ($sDB2)</B> <br><br>";
+    echo "<B>Compare:<BR> ($sDB1) with ($sDB2)</B> <br><br>";
 
-   if (is_array($arDB1[$sDB1])) {
-	  foreach ($arDB1[$sDB1] as $key => $val) {
-		 //echo $key."--".print_r($val)."<BR>";
-		 echo "<div>";
-		 // check if the table name is the identical
-		 if ((trim($arDB1[$sDB1][$key])) == (trim($arDB2[$sDB2][$key]))) {
-			echo "<span style='color:green'><b>" . $key . "</b> is present in $sDB2 </span><BR>";
+    if (is_array($arDB1[$sDB1])) {
+        foreach ($arDB1[$sDB1] as $key => $val) {
+            //echo $key."--".print_r($val)."<BR>";
+            echo "<div>";
+            // check if the table name is the identical
+            if ((trim($arDB1[$sDB1][$key])) === (trim($arDB2[$sDB2][$key]))) {
+                echo "<span style='color:green'><b>" . $key . "</b> is present in $sDB2 </span><BR>";
 
-			// check if are same number of fields
-			if ((count($arDB1[$sDB1][$key])) == (count($arDB2[$sDB2][$key]))) {
-			   echo "<B>IDENTICAL</B><BR>";
-			}
-			else {
-			   echo "<span style='color:red'><B>NOT IDENTICAL :: COLUMNS: </B></span><HR>";
-			   //compareFields($arDB1[$sDB1][$key]);
-			   foreach ($arDB1[$sDB1][$key] as $column) {
-				  echo "<B>" . $column ['Field'] . "</B> " . $column ['Type'] . "<br>";
-			   }
-			   //print '<pre>'; print_r($arDB1[$sDB1][$key]); print '</pre>';
-			}
-		 }
-		 else {
-			echo "<span style='color:red'><b>" . $key . "</b> is missing from $sDB2</span><BR>";
-		 }
+                // check if are same number of fields
+                if ((count($arDB1[$sDB1][$key])) === (count($arDB2[$sDB2][$key]))) {
+                    echo "<B>IDENTICAL</B><BR>";
+                } else {
+                    echo "<span style='color:red'><B>NOT IDENTICAL :: COLUMNS: </B></span><HR>";
+                    //compareFields($arDB1[$sDB1][$key]);
+                    foreach ($arDB1[$sDB1][$key] as $column) {
+                        echo "<B>" . $column ['Field'] . "</B> " . $column ['Type'] . "<br>";
+                    }
+                    //print '<pre>'; print_r($arDB1[$sDB1][$key]); print '</pre>';
+                }
+            } else {
+                echo "<span style='color:red'><b>" . $key . "</b> is missing from $sDB2</span><BR>";
+            }
 
-		 echo "</div>";
-	  }
-   }
+            echo "</div>";
+        }
+    }
 }
 
 /**
  * @noinspection PhpUnused
  *
- * @param $table
+ * @param array $table
  */
-function compareFields($table) {
-   global $arDB1, $arDB2;
+function compareFields($table)
+{
+    global $arDB1, $arDB2;
 // if are not identical show fields
-   foreach ($table as $keyf => $valf) {
-	  // todo - fix key
-	  if ((trim($arDB1[$key][$keyf]['Field'])) === (trim($arDB2[$key][$keyf]['Field']))) {
-		 print "<span color='blue'>" . $table[$keyf]['Field'] . " </span><BR>";
-	  }
-	  else {
-		 print "<span color='red'>" . $table[$keyf]['Field'] . " </span><BR>";
-	  }
-   }
+    foreach ($table as $keyf => $valf) {
+        // todo - fix key
+        if ((trim($arDB1[$key][$keyf]['Field'])) === (trim($arDB2[$key][$keyf]['Field']))) {
+            print "<span>" . $table[$keyf]['Field'] . " </span><BR>";
+        } else {
+            print "<span style='color: red'>" . $table[$keyf]['Field'] . " </span><BR>";
+        }
+    }
 }
 
 /**
  * @return string
  */
-function checkConnectionAndDB() {
-   global $sDB1, $sDB2, $dbservername, $dbserveruser, $dbserverpass;
+function checkConnectionAndDB()
+{
+    global $sDB1, $sDB2, $dbservername, $dbserveruser, $dbserverpass;
 
-   if (
-	   (!empty($_POST["sDB1"])) &&
-	   (!empty($_POST["sDB2"])) &&
-	   (!empty($_POST["dbservername"])) &&
-	   (!empty($_POST["dbserveruser"]))
-   ) {
-	  $sDB1 = $_POST["sDB1"];
-	  $sDB2 = $_POST["sDB2"];
+    if (
+        (!empty($_POST["sDB1"])) &&
+        (!empty($_POST["sDB2"])) &&
+        (!empty($_POST["dbservername"])) &&
+        (!empty($_POST["dbserveruser"]))
+    ) {
+        $sDB1 = $_POST["sDB1"];
+        $sDB2 = $_POST["sDB2"];
 
-	  /* DEFAULT CONNECTION SETTINGS */
-	  $dbservername = $_POST["dbservername"];
-	  $dbserveruser = $_POST["dbserveruser"];
-	  $dbserverpass = $_POST["dbserverpass"];
+        /* DEFAULT CONNECTION SETTINGS */
+        $dbservername = $_POST["dbservername"];
+        $dbserveruser = $_POST["dbserveruser"];
+        $dbserverpass = $_POST["dbserverpass"];
 
-	  //print_r($_POST);
-	  return "valid";
-   }
-   else {
-	  /* DEFAULT DEFINE 2 DB FOR COMPARE */
+        //print_r($_POST);
+        return "valid";
+    }
 
-	  $sDB1 = "bestprice";
-	  $sDB2 = "bestpricee";
+    /* DEFAULT DEFINE 2 DB FOR COMPARE */
 
-	  //$sDB1prefix = "";
-	  //$sDB2prefix = "";
+    $sDB1 = "bestprice";
+    $sDB2 = "bestpricee";
 
-	  /* DEFAULT CONNECTION SETTINGS */
+    //$sDB1prefix = "";
+    //$sDB2prefix = "";
 
-	  $dbservername = "localhost";
-	  $dbserveruser = "root";
-	  $dbserverpass = "";
+    /* DEFAULT CONNECTION SETTINGS */
 
-	  return "notvalid";
-   }
+    $dbservername = "localhost";
+    $dbserveruser = "root";
+    $dbserverpass = "";
+
+    return "notvalid";
 }
 
 ?>
@@ -212,26 +214,26 @@ function checkConnectionAndDB() {
             </form>
         </TD>
         <TD>
-		   <?php
-		   $valid_data = checkConnectionAndDB();
+            <?php
+            $valid_data = checkConnectionAndDB();
 
-		   if ($valid_data == "valid") {
-			  $dbservername = $_POST["dbservername"];
-			  $dbserveruser = $_POST["dbserveruser"];
-			  $dbserverpass = $_POST["dbserverpass"];
-			  $link         = mysql_connect($dbservername, $dbserveruser, $dbserverpass);
-			  $sDB1         = $_POST["sDB1"];
-			  $sDB2         = $_POST["sDB2"];
-			  compareDB($sDB1, $sDB2);
-		   }
-		   ?>
+            if ($valid_data === "valid") {
+                $dbservername = $_POST["dbservername"];
+                $dbserveruser = $_POST["dbserveruser"];
+                $dbserverpass = $_POST["dbserverpass"];
+                $link = mysql_connect($dbservername, $dbserveruser, $dbserverpass);
+                $sDB1 = $_POST["sDB1"];
+                $sDB2 = $_POST["sDB2"];
+                compareDB($sDB1, $sDB2);
+            }
+            ?>
         </TD>
         <TD>
-		   <?php
-		   if ($valid_data == "valid") {
-			  compareDB($sDB2, $sDB1);
-		   }
-		   ?>
+            <?php
+            if ($valid_data === "valid") {
+                compareDB($sDB2, $sDB1);
+            }
+            ?>
         </TD>
     </TR>
 </TABLE>
